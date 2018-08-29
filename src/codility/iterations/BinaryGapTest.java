@@ -1,4 +1,4 @@
-package codility;
+package codility.iterations;
 
 import static org.junit.Assert.*;
 

@@ -1,4 +1,4 @@
-package codility;
+package codility.timecomplexity;
 
 import static org.junit.Assert.*;
 
