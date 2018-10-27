@@ -50,17 +50,59 @@ public class GenomicRangeQuery {
 		impactMap.put('G', 3);
 		impactMap.put('T', 4);
 	}
-	
+
 	public int[] solution(String S, int[] P, int[] Q) {
+		int M = P.length;
+		int[][] prefixCount = new int[3][S.length()];
+
+		for(int i=0; i < S.length(); i++) {
+			int a = 0, c = 0, g = 0;// t = 0;
+			if (S.charAt(i) == 'A') {
+				a = 1;
+			} else if (S.charAt(i) == 'C') {
+				c = 1;
+			} else if (S.charAt(i) == 'G') {
+				g = 1;
+			} //else {
+			//	t = 1;
+			//}
+
+			prefixCount[0][i] = i == 0 ? a : prefixCount[0][i-1] + a;
+			prefixCount[1][i] = i == 0 ? c : prefixCount[1][i-1] + c;
+			prefixCount[2][i] = i == 0 ? g : prefixCount[2][i-1] + g;
+			//prefixCount[3][i] = i == 0 ? t : prefixCount[3][i-1] + t;
+		}
+
+		int[] results = new int[M];
+
+		for (int i=0; i < M; i++) {
+			results[i] = 4;
+
+			for (int j=0; j < 3; j++) {
+				int countP = P[i] == 0 ? 0 : prefixCount[j][P[i]-1];
+				int countQ = prefixCount[j][Q[i]];
+				
+				if (countQ - countP > 0) {
+					results[i] = j + 1;
+					break;
+				}
+			}
+
+
+		}
+		return results;
+	}
+
+	public int[] naiveSolution(String S, int[] P, int[] Q) {
 		int queries = P.length;
 		int[] solution = new int[queries];
 		char[] dna = S.toCharArray();
-		
+
 		for(int i=0; i < queries; i++) {
 			int min = impactMap.get(dna[P[i]]);
 			for (int j=P[i]+1; j <= Q[i]; j++) {
 				if (min == 1) break;
-				
+
 				int impact = impactMap.get(dna[j]);
 				if (min > impact) {
 					min = impact;
@@ -68,7 +110,7 @@ public class GenomicRangeQuery {
 			}
 			solution[i] = min;
 		}
-		
+
 		return solution;
 	}
 
